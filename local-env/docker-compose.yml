@@ -1,0 +1,97 @@
+version: "3.5"
+services:
+#  prometheus:
+#    container_name: prometheus
+#    image: prom/prometheus:v2.37.6
+#    ports:
+#      - 9090:9090
+#    volumes:
+#      - ./deployment/prometheus/config.yml:/etc/prometheus/prometheus.yml
+#    depends_on:
+#      - temporal
+#  grafana:
+#    image: grafana/grafana:9.2.15
+#    depends_on:
+#      - prometheus
+#    ports:
+#      - 3000:3000
+#  init-postgres:
+#    depends_on:
+#      - postgres
+#    image: temporalio/admin-tools:1.20
+#    environment:
+#      SQL_HOST: postgres
+#      SQL_USER: temporal
+#      SQL_PASSWORD: temporal
+#      SQL_PORT: 5432
+#      SQL_PLUGIN: postgres12
+#    entrypoint: bash
+#    command: >
+#      -c "echo 'Waiting for Postgres to be ready...' && \
+#      until nc -z postgres 5432; do echo 'Waiting for PostgreSQL to startup.' && sleep 1; done && \
+#      echo 'PostgreSQL started.' && \
+#      temporal-sql-tool --db temporal create-database && \
+#      temporal-sql-tool --db temporal setup-schema -v 0.0 && \
+#      temporal-sql-tool --db temporal update-schema -d ./schema/postgresql/v12/temporal/versioned && \
+#      temporal-sql-tool --db temporal_visibility create-database && \
+#      temporal-sql-tool --db temporal_visibility setup-schema -v 0.0 && \
+#      temporal-sql-tool --db temporal_visibility update-schema -d ./schema/postgresql/v12/visibility/versioned"
+  postgres:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: temporal
+      POSTGRES_PASSWORD: temporal
+    ports:
+      - 5432:5432
+  temporal:
+    depends_on:
+      - postgres
+      #- init-postgres (it can't wait until the init script finishes and want to recreate the prod environment without auto-setup)
+    image: temporalio/server:1.20
+    environment:
+      # Env variables reference: https://github.com/temporalio/temporal/blob/v1.20.0/docker/config_template.yaml
+      NUM_HISTORY_SHARDS: 512
+      DB: postgres12
+      POSTGRES_USER: temporal
+      POSTGRES_PWD: temporal
+      # (POSTGRES_SEEDS means "db hostname")
+      POSTGRES_SEEDS: postgres
+      BIND_ON_IP: 0.0.0.0
+      # TODO PUBLIC_FRONTEND_ADDRESS: ?????????????
+      PROMETHEUS_ENDPOINT: 0.0.0.0:9090
+      # Select the specific services to start on this instance (can scale each service individually or grouped)
+      # SERVICE: frontend,matching,worker,history
+      # TEMPORAL_BROADCAST_ADDRESS must be reachable from other instances (uses ringpop gossip protocol)
+      # In k8s use "status.podIP":
+      #   - name: POD_IP
+      #   valueFrom:
+      #     fieldRef:
+      #       fieldPath: status.podIP
+      TEMPORAL_BROADCAST_ADDRESS: 127.0.0.1
+    ports:
+      # FRONTEND_GRPC_PORT "7233"
+      - 7233:7233
+      # FRONTEND_MEMBERSHIP_PORT "6933"
+      - 6933:6933
+      # HISTORY_GRPC_PORT "7234"
+      - 7234:7234
+      # HISTORY_MEMBERSHIP_PORT "6934"
+      - 6934:6934
+      # MATCHING_GRPC_PORT "7235"
+      - 7235:7235
+      # MATCHING_MEMBERSHIP_PORT "6935"
+      - 6935:6935
+      # WORKER_GRPC_PORT "7239"
+      - 7239:7239
+      # WORKER_MEMBERSHIP_PORT "6939"
+      - 6939:6939
+      # PROMETHEUS_ENDPOINT port
+      - 9090:9090
+  ui:
+    depends_on:
+      - temporal
+    image: temporalio/ui:2.10.3
+    environment:
+      TEMPORAL_ADDRESS: temporal:7233
+    ports:
+      - 8080:8080
