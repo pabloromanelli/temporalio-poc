@@ -1,0 +1,98 @@
+{{- range $service := (list "frontend" "history" "matching" "worker") }}
+{{- $serviceValues := index $.Values.server $service -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $service }}
+  labels:
+    app.kubernetes.io/name: {{ include "temporal.name" $ }}
+    helm.sh/chart: {{ include "temporal.chart" $ }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/version: {{ $.Chart.AppVersion | replace "+" "_" }}
+    app.kubernetes.io/component: {{ $service }}
+    app.kubernetes.io/part-of: {{ $.Chart.Name }}
+spec:
+  replicas: {{ $serviceValues.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "temporal.name" $ }}
+      app.kubernetes.io/instance: {{ $.Release.Name }}
+      app.kubernetes.io/component: {{ $service }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "temporal.name" $ }}
+        helm.sh/chart: {{ include "temporal.chart" $ }}
+        app.kubernetes.io/managed-by: {{ $.Release.Service }}
+        app.kubernetes.io/instance: {{ $.Release.Name }}
+        app.kubernetes.io/version: {{ $.Chart.AppVersion | replace "+" "_" }}
+        app.kubernetes.io/component: {{ $service }}
+        app.kubernetes.io/part-of: {{ $.Chart.Name }}
+      annotations:
+        prometheus.io/job: {{ $.Chart.Name }}-{{ $service }}
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9090'
+    spec:
+      containers:
+        - name: {{ $.Chart.Name }}-{{ $service }}
+          image: "temporalio/server:1.20.1"
+          imagePullPolicy: IfNotPresent
+          env:
+            # using default template env variables https://github.com/temporalio/temporal/blob/v1.20.0/docker/config_template.yaml
+            - name: TEMPORAL_BROADCAST_ADDRESS
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            # SERVICES: frontend,matching,worker,history
+            - name: SERVICES
+              value: {{ $service }}
+            # IMPORTANT: This value cannot be changed, once it's set.
+            - name: NUM_HISTORY_SHARDS
+              value: "512"
+            - name: DB
+              value: postgres12
+            - name: SQL_TLS_ENABLED
+              value: {{ $.Values.server.config.persistence.tls.enabled | quote }}
+            # (SEEDS means "db hostname")
+            - name: POSTGRES_SEEDS
+              value: {{ $.Values.server.config.persistence.host }}
+            - name: POSTGRES_USER
+              value: {{ $.Values.server.config.persistence.user }}
+            - name: POSTGRES_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-password
+                  key: password
+            - name: PROMETHEUS_ENDPOINT
+              value: "0.0.0.0:9090"
+            - name: BIND_ON_IP
+              value: "0.0.0.0"
+          {{- if $.Values.server.versionCheckDisabled }}
+            - name: TEMPORAL_VERSION_CHECK_DISABLED
+              value: "1"
+          {{- end }}
+          ports:
+            - name: rpc
+              containerPort: {{ $serviceValues.service.port }}
+              protocol: TCP
+            - name: metrics
+              containerPort: 9090
+              protocol: TCP
+          {{- if ne $service "worker"}}
+          livenessProbe:
+             initialDelaySeconds: 150
+             tcpSocket:
+               port: rpc
+          {{- end }}
+          volumeMounts:
+            - name: dynamic-config
+              mountPath: /etc/temporal/config/dynamicconfig/
+          resources:
+            {{- toYaml ($serviceValues.resources) | nindent 12 }}
+      volumes:
+        - name: dynamic-config
+          configMap:
+            name: dynamic-config
+---
+{{- end }}

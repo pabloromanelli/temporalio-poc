@@ -1,0 +1,56 @@
+# Chart debug mode
+# (eg. disable helm hook delete policy)
+debug: false
+
+server:
+  config:
+    persistence:
+      host: "temporaldb.temporalio.svc.cluster.local"
+      user: temporal
+      password: temporal
+      tls:
+        enabled: false
+  frontend:
+    replicaCount: 1
+    service:
+      port: 7233
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+  history:
+    replicaCount: 1
+    service:
+      port: 7234
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+  matching:
+    replicaCount: 1
+    service:
+      port: 7235
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+  worker:
+    replicaCount: 1
+    service:
+      port: 7239
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi

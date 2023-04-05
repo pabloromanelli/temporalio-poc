@@ -60,13 +60,8 @@ services:
       # TODO PUBLIC_FRONTEND_ADDRESS: ?????????????
       PROMETHEUS_ENDPOINT: 0.0.0.0:9090
       # Select the specific services to start on this instance (can scale each service individually or grouped)
-      # SERVICE: frontend,matching,worker,history
+      # SERVICES: frontend,matching,worker,history
       # TEMPORAL_BROADCAST_ADDRESS must be reachable from other instances (uses ringpop gossip protocol)
-      # In k8s use "status.podIP":
-      #   - name: POD_IP
-      #   valueFrom:
-      #     fieldRef:
-      #       fieldPath: status.podIP
       TEMPORAL_BROADCAST_ADDRESS: 127.0.0.1
     ports:
       # FRONTEND_GRPC_PORT "7233"
