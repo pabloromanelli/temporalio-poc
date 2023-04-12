@@ -50,7 +50,7 @@ services:
     image: temporalio/server:1.20
     environment:
       # Env variables reference: https://github.com/temporalio/temporal/blob/v1.20.0/docker/config_template.yaml
-      NUM_HISTORY_SHARDS: 512
+      NUM_HISTORY_SHARDS: 1
       DB: postgres12
       POSTGRES_USER: temporal
       POSTGRES_PWD: temporal

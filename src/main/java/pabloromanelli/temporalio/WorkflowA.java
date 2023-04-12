@@ -6,5 +6,5 @@ import io.temporal.workflow.WorkflowMethod;
 @WorkflowInterface
 public interface WorkflowA {
     @WorkflowMethod
-    void waitAWhile();
+    void start();
 }
