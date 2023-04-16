@@ -1,4 +1,4 @@
-package pabloromanelli.temporalio;
+package pabloromanelli.temporalio.workflow;
 
 import io.temporal.workflow.WorkflowInterface;
 import io.temporal.workflow.WorkflowMethod;

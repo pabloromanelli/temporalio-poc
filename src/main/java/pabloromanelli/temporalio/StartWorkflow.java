@@ -23,7 +23,7 @@ public class StartWorkflow {
                 "WorkflowA",
                 WorkflowOptions.newBuilder()
                         .setWorkflowId("workflowUniqueId3")
-                        .setTaskQueue(StartWorker.QUEUE_NAME)
+                        .setTaskQueue("default")
                         .setWorkflowIdReusePolicy(WorkflowIdReusePolicy.WORKFLOW_ID_REUSE_POLICY_REJECT_DUPLICATE)
                         .build()
         );
@@ -34,5 +34,9 @@ public class StartWorkflow {
                 + "' and runId='"
                 + instance.getRunId()
                 + "'");
+        // send signals
+//        Workflow
+//                .newUntypedExternalWorkflowStub("workflowId")
+//                .signal("signalName", "param");
     }
 }

@@ -80,6 +80,7 @@ spec:
               containerPort: 9090
               protocol: TCP
           {{- if ne $service "worker"}}
+          # OPEN ISSUE https://github.com/temporalio/helm-charts/issues/203
           livenessProbe:
              initialDelaySeconds: 150
              tcpSocket:

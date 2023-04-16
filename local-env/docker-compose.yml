@@ -66,22 +66,22 @@ services:
     ports:
       # FRONTEND_GRPC_PORT "7233"
       - 7233:7233
-      # FRONTEND_MEMBERSHIP_PORT "6933"
-      - 6933:6933
-      # HISTORY_GRPC_PORT "7234"
-      - 7234:7234
-      # HISTORY_MEMBERSHIP_PORT "6934"
-      - 6934:6934
-      # MATCHING_GRPC_PORT "7235"
-      - 7235:7235
-      # MATCHING_MEMBERSHIP_PORT "6935"
-      - 6935:6935
-      # WORKER_GRPC_PORT "7239"
-      - 7239:7239
-      # WORKER_MEMBERSHIP_PORT "6939"
-      - 6939:6939
-      # PROMETHEUS_ENDPOINT port
-      - 9090:9090
+#      # FRONTEND_MEMBERSHIP_PORT "6933"
+#      - 6933:6933
+#      # HISTORY_GRPC_PORT "7234"
+#      - 7234:7234
+#      # HISTORY_MEMBERSHIP_PORT "6934"
+#      - 6934:6934
+#      # MATCHING_GRPC_PORT "7235"
+#      - 7235:7235
+#      # MATCHING_MEMBERSHIP_PORT "6935"
+#      - 6935:6935
+#      # WORKER_GRPC_PORT "7239"
+#      - 7239:7239
+#      # WORKER_MEMBERSHIP_PORT "6939"
+#      - 6939:6939
+#      # PROMETHEUS_ENDPOINT port
+#      - 9090:9090
   ui:
     depends_on:
       - temporal
@@ -89,4 +89,4 @@ services:
     environment:
       TEMPORAL_ADDRESS: temporal:7233
     ports:
-      - 8080:8080
+      - 8081:8080

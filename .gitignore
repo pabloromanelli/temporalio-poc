@@ -4,6 +4,7 @@ build/
 target/
 application-secrets.yml
 
+### STS ###
 .apt_generated
 .classpath
 .factorypath
@@ -11,7 +12,9 @@ application-secrets.yml
 .settings
 .springBeans
 .sts4-cache
-.jqwik-database
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
 .idea
@@ -19,10 +22,13 @@ application-secrets.yml
 *.iml
 *.ipr
 out/
+!**/src/main/**/out/
+!**/src/test/**/out/
 
 ### VS Code ###
 .vscode/
 
 .DS_Store
-postgres-data
-/dependencies/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
