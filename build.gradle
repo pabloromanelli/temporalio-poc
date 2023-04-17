@@ -26,10 +26,6 @@ test {
     useJUnitPlatform()
 }
 
-tasks.named("bootBuildImage") {
+bootBuildImage {
     imageName = "ghcr.io/pabloromanelli/temporalio-poc"
-    docker {
-        //
-        host = "/Users/promanelli/.colima/default/docker.sock"
-    }
 }

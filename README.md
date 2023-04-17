@@ -23,7 +23,8 @@ cd local-env
 ./create-namespace.sh
 ```
 
-Temporal UI: http://localhost:8081
+- Temporal UI: http://localhost:8081
+- Temporal Server Metrics: http://localhost:9090/metrics
 
 #### Disclaimers:
 
@@ -38,12 +39,25 @@ Temporal UI: http://localhost:8081
 - Prometheus metrics endpoint: http://localhost:8080/actuator/prometheus
 - Graceful worker shutdown
 
-### Docker image
+### Docker Image
+
+Build:
+
 ```bash
 ./gradlew bootBuildImage
 ```
 
-### Env Variables
-- WORKER_clusterHostPort
-- workflowQueue
-- activitiesQueue
+Run:
+
+```bash
+docker run --rm -ti \
+  -e TEMPORAL_ADDRESS=host.docker.internal:7233 \
+  --network=host \
+  ghcr.io/pabloromanelli/temporalio-poc
+```
+
+#### Env Variables
+
+- TEMPORAL_ADDRESS
+- TEMPORAL_WORKFLOWQUEUE
+- TEMPORAL_ACTIVITIESQUEUE

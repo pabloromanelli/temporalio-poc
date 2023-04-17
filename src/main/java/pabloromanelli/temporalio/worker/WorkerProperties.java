@@ -2,9 +2,9 @@ package pabloromanelli.temporalio.worker;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties("worker")
+@ConfigurationProperties("temporal")
 public record WorkerProperties(
-        String clusterHostPort,
+        String address,
         String workflowQueue,
         String activitiesQueue
 ) {

@@ -66,6 +66,8 @@ services:
     ports:
       # FRONTEND_GRPC_PORT "7233"
       - 7233:7233
+      # PROMETHEUS_ENDPOINT port
+      - 9090:9090
 #      # FRONTEND_MEMBERSHIP_PORT "6933"
 #      - 6933:6933
 #      # HISTORY_GRPC_PORT "7234"
@@ -80,8 +82,6 @@ services:
 #      - 7239:7239
 #      # WORKER_MEMBERSHIP_PORT "6939"
 #      - 6939:6939
-#      # PROMETHEUS_ENDPOINT port
-#      - 9090:9090
   ui:
     depends_on:
       - temporal

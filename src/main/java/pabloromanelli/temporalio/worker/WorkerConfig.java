@@ -35,7 +35,7 @@ public class WorkerConfig {
     public WorkflowServiceStubs service(Scope scope, WorkerProperties properties) {
         return WorkflowServiceStubs.newConnectedServiceStubs(
                 WorkflowServiceStubsOptions.newBuilder()
-                        .setTarget(properties.clusterHostPort())
+                        .setTarget(properties.address())
                         .setMetricsScope(scope)
                         .build(),
                 Duration.ofSeconds(10)

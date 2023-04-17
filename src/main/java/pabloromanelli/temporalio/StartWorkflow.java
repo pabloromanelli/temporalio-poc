@@ -22,7 +22,8 @@ public class StartWorkflow {
         WorkflowStub workflow = client.newUntypedWorkflowStub(
                 "WorkflowA",
                 WorkflowOptions.newBuilder()
-                        .setWorkflowId("workflowUniqueId3")
+                        // You should always use a business unique key to start workflows (to avoid duplicates)
+                        .setWorkflowId("workflowUniqueId")
                         .setTaskQueue("default")
                         .setWorkflowIdReusePolicy(WorkflowIdReusePolicy.WORKFLOW_ID_REUSE_POLICY_REJECT_DUPLICATE)
                         .build()
